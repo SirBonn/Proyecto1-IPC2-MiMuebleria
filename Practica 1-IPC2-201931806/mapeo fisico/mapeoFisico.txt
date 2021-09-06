@@ -1,0 +1,77 @@
+CREATE USER 'sirRoot'@'localhost' IDENTIFIED BY 'sirRoot2_':
+GRANT ALL PRIVILEGES ON *.* TO 'sirRoot'@'localhost';
+FLUSH PRIVILEGES;
+
+
+DROP TABLE IF EXISTS piezas;
+CREATE TABLE piezas (
+  id_pieza int NOT NULL,
+  tipo_pieza varchar(20) NOT NULL,
+  costo_pieza decimal(7,2) NOT NULL,
+  cantidad_pieza int DEFAULT NULL,
+  PRIMARY KEY (id_pieza)
+);
+
+DROP TABLE IF EXISTS clientes;
+CREATE TABLE `clientes` (
+  `NIT_cliente` varchar(40) NOT NULL,
+  `nombre_cliente` varchar(40) NOT NULL,
+  `direccion_cliente` varchar(40) NOT NULL,
+  `telefono_cliente` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`NIT_cliente`)
+);
+
+INSERT INTO clientes VALUES ('123123','asda','adasdas',''),('22222','asdas','asdasd',''),('831023981','prueba','adasdas','');
+
+DROP TABLE IF EXISTS devolucion;
+CREATE TABLE devolucion (
+  ID_devolucion varchar(30) NOT NULL,
+  valor_reembolso decimal(7,2) NOT NULL,
+  devuelto date NOT NULL,
+  PRIMARY KEY (ID_devolucion),
+  CONSTRAINT fk_ordenDevuelta FOREIGN KEY (ID_devolucion) REFERENCES pedidos (id_venta)
+);
+
+DROP TABLE IF EXISTS muebles;
+CREATE TABLE muebles (
+  tipo_mueble varchar(30) NOT NULL,
+  ID_mueble int NOT NULL,
+  costo_mueble decimal(7,2) NOT NULL,
+  cantidad int DEFAULT NULL,
+  PRIMARY KEY (ID_mueble)
+);
+
+DROP TABLE IF EXISTS pedidos;
+CREATE TABLE pedidos (
+  id_venta varchar(40) NOT NULL,
+  fecha date NOT NULL,
+  cliente varchar(40) NOT NULL,
+  mueble int NOT NULL,
+  PRIMARY KEY (id_venta),
+  KEY cliente (cliente),
+  KEY mueble (mueble),
+  CONSTRAINT cliente FOREIGN KEY (cliente) REFERENCES clientes (NIT_cliente) ON DELETE CASCADE,
+  CONSTRAINT mueble FOREIGN KEY (mueble) REFERENCES muebles (ID_mueble) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS armar_mueble;
+CREATE TABLE armar_mueble (
+  armar_IDmueble int NOT NULL,
+  costo_armado decimal(7,2) NOT NULL,
+  ensamblador varchar(20) NOT NULL,
+  PRIMARY KEY (armar_IDmueble),
+  KEY fk_ensambadorMueble (ensamblador),
+  CONSTRAINT armar_mueble_ibfk_1 FOREIGN KEY (armar_IDmueble) REFERENCES muebles (ID_mueble),
+  CONSTRAINT fk_ensambadorMueble FOREIGN KEY (ensamblador) REFERENCES trabajadores (ID_usuario)
+);
+
+DROP TABLE IF EXISTS trabajadores;
+REATE TABLE trabajadores (
+  ID_usuario varchar(20) NOT NULL,
+  password varchar(40) DEFAULT NULL,
+  area_trabajo varchar(30) NOT NULL,
+  PRIMARY KEY (ID_usuario)
+);
+
+INSERT INTO trabajadores VALUES ('Byron','admin','fabrica'),('Byron2','adminn','ventas');
+
